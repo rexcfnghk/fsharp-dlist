@@ -3,6 +3,8 @@ namespace FSharp.DList
 [<Sealed>]
 type DList<'a> =
     interface System.IEquatable<DList<'a>>
+    interface System.IComparable<DList<'a>>
+    interface System.IComparable
 
 module DList =
 
@@ -17,3 +19,5 @@ module DList =
     val foldr<'a, 'b> : ('a -> 'b -> 'b) -> 'b -> DList<'a> -> 'b
 
     val cons<'a> : 'a -> DList<'a> -> DList<'a>
+
+    val map<'a, 'b> : ('a -> 'b) -> DList<'a> -> DList<'b>

@@ -50,3 +50,16 @@ let ``DLists can roundtrip`` () =
 
         DList.fromSeq (DList.toSeq sut) =! sut
     }
+
+[<Fact>]
+let ``DLists are comparable`` () =
+    Property.check <| property {
+        let! left =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        let right = DList.map ((+) 1) left
+
+        right >! left
+    }
