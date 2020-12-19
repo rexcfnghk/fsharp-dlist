@@ -20,7 +20,7 @@ type DList<'a> =
 
     override this.GetHashCode () =
         let seq = DList.ToSeq<'a> this
-        Seq.fold (fun acc x -> acc * 7 + Unchecked.hash x) 0 seq
+        Seq.fold (fun acc x -> acc * 7 + Unchecked.hash x) 13 seq
 
     interface IEquatable<DList<'a>> with
         member this.Equals other =
