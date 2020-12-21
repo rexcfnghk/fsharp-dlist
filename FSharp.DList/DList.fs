@@ -24,8 +24,12 @@ type DList<'a> =
 
     interface IEquatable<DList<'a>> with
         member this.Equals other =
-            let (left, right) = (DList.ToSeq<'a> this, DList.ToSeq<'a> other)
-            Seq.forall2 (Unchecked.equals) left right
+            let (left, right) =
+                (Seq.toArray <| DList.ToSeq<'a> this,
+                 Seq.toArray <| DList.ToSeq<'a> other)
+            if Array.length left <> Array.length right
+            then false
+            else Array.forall2 (Unchecked.equals) left right
 
     interface IComparable<DList<'a>> with
         member this.CompareTo other =
