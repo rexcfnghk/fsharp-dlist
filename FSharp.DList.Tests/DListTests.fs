@@ -1,4 +1,4 @@
-module Tests
+module FSharp.DList.Tests.DListTests
 
 open FSharp.DList
 open Hedgehog

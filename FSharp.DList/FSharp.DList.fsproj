@@ -7,6 +7,7 @@
     <ItemGroup>
         <Compile Include="Utilities.fs" />
         <Compile Include="Seq.fs" />
+        <Compile Include="List.fs" />
         <Compile Include="DList.fsi" />
         <Compile Include="DList.fs" />
     </ItemGroup>
