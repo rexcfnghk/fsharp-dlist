@@ -1,11 +1,9 @@
 namespace FSharp.DList
 
-open FSharp.DList
-open FSharp.DList
-open FSharp.DList
-
 [<Sealed>]
 type DList<'a> =
+    interface System.Collections.Generic.IEnumerable<'a>
+    interface System.Collections.IEnumerable
     interface System.IEquatable<DList<'a>>
     interface System.IComparable<DList<'a>>
     interface System.IComparable

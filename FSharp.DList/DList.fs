@@ -1,6 +1,8 @@
 ﻿namespace FSharp.DList
 
 open System
+open System.Collections
+open System.Collections.Generic
 open FSharp.DList
 
 [<CustomEquality; CustomComparison>]
@@ -48,6 +50,13 @@ type DList<'a> =
             | :? DList<'a> as y ->
                 (this :> IComparable<DList<'a>>).CompareTo y
             | _ -> invalidArg (nameof other) <| sprintf "Object must be of type %s" (nameof DList)
+
+    interface IEnumerable<'a> with
+        member this.GetEnumerator () = (DList.ToSeq this).GetEnumerator ()
+
+    interface IEnumerable with
+        member this.GetEnumerator () =
+            (this :> IEnumerable<'a>).GetEnumerator () :> IEnumerator
 
 [<RequireQualifiedAccess>]
 module DList =
