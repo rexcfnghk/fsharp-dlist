@@ -1,16 +1,18 @@
 ﻿namespace FSharp.DList
 
 open System
+open FSharp.DList
 
 [<CustomEquality; CustomComparison>]
 type DList<'a> =
     | DList of (seq<'a> -> seq<'a>)
 
-    static member ToSeq (DList xs) =
-        xs Seq.empty
+    static member UnDList (DList xs) = xs
+
+    static member ToSeq xs = DList.UnDList<'a> xs Seq.empty
 
     override this.ToString () =
-        sprintf "%A" <| DList.ToSeq<'a> this
+        sprintf "%A" <| DList.ToSeq this
 
     override this.Equals other =
         match other with
@@ -19,22 +21,26 @@ type DList<'a> =
         | _ -> false
 
     override this.GetHashCode () =
-        let seq = DList.ToSeq<'a> this
+        let seq = DList.ToSeq this
         Seq.fold (fun acc x -> acc * 7 + Unchecked.hash x) 13 seq
 
     interface IEquatable<DList<'a>> with
         member this.Equals other =
             let (left, right) =
-                (Seq.toArray <| DList.ToSeq<'a> this,
-                 Seq.toArray <| DList.ToSeq<'a> other)
+                (Seq.toArray <| DList.ToSeq this,
+                 Seq.toArray <| DList.ToSeq other)
             if Array.length left <> Array.length right
             then false
             else Array.forall2 (Unchecked.equals) left right
 
     interface IComparable<DList<'a>> with
         member this.CompareTo other =
-            let (leftSeq, rightSeq) = (DList.ToSeq<'a> this, DList.ToSeq<'a> other)
-            Seq.fold2 (fun acc x y -> if acc <> 0 then acc else Unchecked.compare x y) 0 leftSeq rightSeq
+            let (left, right) =
+                (Seq.toArray <| DList.ToSeq this,
+                 Seq.toArray <| DList.ToSeq other)
+            if Array.length left <> Array.length right
+            then compare (Array.length left) (Array.length right)
+            else Array.fold2 (fun acc x y -> if acc <> 0 then acc else Unchecked.compare x y) 0 left right
 
     interface IComparable with
         member this.CompareTo other =
@@ -45,9 +51,13 @@ type DList<'a> =
 
 [<RequireQualifiedAccess>]
 module DList =
+    open Utilities
+
     let empty<'a> : DList<'a> = DList id
 
     let toSeq (DList xs) = xs Seq.empty
+
+    let toArray xs = (Seq.toArray << toSeq) xs
 
     let toList xs = (Seq.toList << toSeq) xs
 
@@ -56,5 +66,11 @@ module DList =
     let fromSeq xs = (DList << Seq.append) xs
 
     let cons x xs = fromSeq <| Seq.cons x (toSeq xs)
+
+    let singleton x = (flip cons empty) x
+
+    let append (DList xs) (DList ys) = DList (xs << ys)
+
+    let snoc xs x = append xs (singleton x)
 
     let map f x = (foldr (cons << f) empty) x

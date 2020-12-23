@@ -63,3 +63,28 @@ let ``DLists are comparable`` () =
 
         right >! left
     }
+
+[<Fact>]
+let ``Snoc returns expected list with new element concatenated at the end`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! dlist =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        let! x = intGen
+
+        DList.toList dlist @ [x] =! DList.toList (DList.snoc dlist x)
+    }
+
+[<Fact>]
+let ``Singleton returns expected DList with expected single element`` () =
+    Property.check <| property {
+        let! char = Gen.alphaNum
+
+        let sut = DList.singleton char
+
+        sut =! DList.fromSeq [char]
+    }
