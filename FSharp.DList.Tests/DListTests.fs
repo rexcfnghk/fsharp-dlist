@@ -139,7 +139,7 @@ let ``IsEmpty returns true when DList is empty`` () =
 
 [<Fact>]
 let ``IsEmpty returns false when DList has at least one element`` () =
-        Property.check <| property {
+    Property.check <| property {
         let intGen = Gen.int (Range.constant 10 100)
 
         let! sut =
@@ -148,4 +148,45 @@ let ``IsEmpty returns false when DList has at least one element`` () =
             |> Gen.map DList.fromSeq
 
         DList.isEmpty sut =! false
+    }
+
+[<Fact>]
+let ``Iter calls f expected number of times`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+        let mutable i = 0
+        let incr _ =
+            i <- i + 1
+            ()
+
+        let! sut =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.iter incr sut
+
+        i =! DList.length sut
+    }
+
+[<Fact>]
+let ``Equals returns false when other is not DList`` () =
+    let sut = DList.empty
+    let other = obj ()
+
+    sut.Equals other =! false
+
+[<Fact>]
+let ``GetHashCode returns equal values when instances are equal`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! sut =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        let other = sut
+
+        sut.GetHashCode () =! other.GetHashCode ()
     }

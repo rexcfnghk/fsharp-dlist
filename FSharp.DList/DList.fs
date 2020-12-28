@@ -89,6 +89,8 @@ module DList =
 
     let map f x = (foldr (cons << f) empty) x
 
+    let iter f x = (Seq.iter f << toSeq) x
+
     let length (x: DList<'a>) = (Seq.length << toSeq) x
 
     let isEmpty x = (Seq.isEmpty << toSeq) x
