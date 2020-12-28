@@ -27,7 +27,7 @@ jobs:
       uses: b3b00/coverlet-action@master
       with:
         testProject: 'FSharp.DList.Tests/FSharp.DList.Tests.fsproj'
-        output: './coverage/lcov.info'
+        output: '../coverage/lcov.info'
         outputFormat: 'lcov'
         excludes: '[program]*'
     - name: Coveralls      
