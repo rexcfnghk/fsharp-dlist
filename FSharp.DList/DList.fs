@@ -42,14 +42,19 @@ type DList<'a> =
                  Seq.toArray <| DList.ToSeq other)
             if Array.length left <> Array.length right
             then compare (Array.length left) (Array.length right)
-            else Array.fold2 (fun acc x y -> if acc <> 0 then acc else Unchecked.compare x y) 0 left right
+            else
+                let folder acc x y =
+                    if acc <> 0
+                    then acc
+                    else Unchecked.compare x y
+                Array.fold2 folder 0 left right
 
     interface IComparable with
         member this.CompareTo other =
             match other with
             | :? DList<'a> as y ->
                 (this :> IComparable<DList<'a>>).CompareTo y
-            | _ -> invalidArg (nameof other) <| sprintf "Object must be of type %s" (nameof DList)
+            | _ -> invalidArg (nameof other) <| sprintf $"Object must be of type %s{nameof DList}"
 
     interface IEnumerable<'a> with
         member this.GetEnumerator () = (DList.ToSeq this).GetEnumerator ()

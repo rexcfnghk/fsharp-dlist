@@ -80,6 +80,21 @@ let ``Snoc returns expected list with new element concatenated at the end`` () =
     }
 
 [<Fact>]
+let ``Cons returns expected list with new element concatenated at the start`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! dlist =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        let! x = intGen
+
+        x :: DList.toList dlist =! DList.toList (DList.cons x dlist)
+    }
+
+[<Fact>]
 let ``Singleton returns expected DList with expected single element`` () =
     Property.check <| property {
         let! char = Gen.alphaNum
@@ -87,4 +102,17 @@ let ``Singleton returns expected DList with expected single element`` () =
         let sut = DList.singleton char
 
         sut =! DList.fromSeq [char]
+    }
+
+[<Fact>]
+let ``Map id returns original DList`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! dlist =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.map id dlist =! dlist
     }
