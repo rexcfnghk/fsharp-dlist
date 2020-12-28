@@ -23,3 +23,15 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name : Coverlet
+      uses: b3b00/coverlet-action
+      with:
+        testProject: 'FSharp.DList.Tests/FSharp.DList.Tests.csproj'
+        output: 'lcov.info'
+        outputFormat: 'lcov'
+        excludes: '[program]*'
+    - name: Coveralls      
+      uses: coverallsapp/github-action@v1.1.1
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN }} 
+        path-to-lcov: ${{steps.coverlet.outputs.coverageFile}} 
