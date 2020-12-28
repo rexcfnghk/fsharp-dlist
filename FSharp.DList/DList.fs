@@ -37,11 +37,15 @@ type DList<'a> =
 
     interface IComparable<DList<'a>> with
         member this.CompareTo other =
-            let (left, right) =
+            let left, right =
                 (Seq.toArray <| DList.ToSeq this,
                  Seq.toArray <| DList.ToSeq other)
-            if Array.length left <> Array.length right
-            then compare (Array.length left) (Array.length right)
+
+            let leftLength, rightLength =
+                Array.length left, Array.length right
+
+            if leftLength <> rightLength
+            then compare leftLength rightLength
             else
                 let folder acc x y =
                     if acc <> 0

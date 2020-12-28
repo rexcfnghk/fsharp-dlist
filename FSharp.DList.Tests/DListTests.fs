@@ -1,5 +1,6 @@
 module FSharp.DList.Tests.DListTests
 
+open System
 open FSharp.DList
 open Hedgehog
 open Swensen.Unquote
@@ -189,4 +190,33 @@ let ``GetHashCode returns equal values when instances are equal`` () =
         let other = sut
 
         sut.GetHashCode () =! other.GetHashCode ()
+    }
+
+[<Fact>]
+let ``Non-generic CompareTo throws when other is not DList`` () =
+    let sut : DList<obj> = DList.empty
+    let other = obj ()
+
+    raises<ArgumentException> <@ (sut :> IComparable).CompareTo other @>
+
+[<Fact>]
+let ``CompareTo returns larger than 0 when left DList has more elements than right`` () =
+    Property.check <| property {
+        let! sut =
+            Range.constant 10 100
+            |> Gen.int
+            |> Gen.map DList.singleton
+
+        compare sut DList.empty >! 0
+    }
+
+[<Fact>]
+let ``CompareTo returns smaller than 0 when left DList has less elements than right`` () =
+    Property.check <| property {
+        let! sut =
+            Range.constant 10 100
+            |> Gen.int
+            |> Gen.map DList.singleton
+
+        compare DList.empty sut <! 0
     }
