@@ -116,3 +116,17 @@ let ``Map id returns original DList`` () =
 
         DList.map id dlist =! dlist
     }
+
+[<Fact>]
+let ``Length returns expected number of elements in DList`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let seqGen =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+
+        let! seq = seqGen
+
+        DList.length (DList.fromSeq seq) =! Seq.length seq
+    }

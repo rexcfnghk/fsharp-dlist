@@ -67,7 +67,7 @@ type DList<'a> =
 module DList =
     open Utilities
 
-    let empty<'a> : DList<'a> = DList id
+    let empty = DList id
 
     let toSeq (DList xs) = xs Seq.empty
 
@@ -75,7 +75,7 @@ module DList =
 
     let toList xs = (Seq.toList << toSeq) xs
 
-    let foldr f z xs = Seq.foldBack f (toList xs) z
+    let foldr f z xs = Seq.foldBack f (toSeq xs) z
 
     let fromSeq xs = (DList << Seq.append) xs
 
@@ -88,3 +88,5 @@ module DList =
     let snoc xs x = append xs (singleton x)
 
     let map f x = (foldr (cons << f) empty) x
+
+    let length (x: DList<'a>) = (Seq.length << toSeq) x

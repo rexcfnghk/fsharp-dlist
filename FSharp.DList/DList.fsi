@@ -10,24 +10,26 @@ type DList<'a> =
 
 module DList =
 
-    val empty<'a> : DList<'a>
+    val empty : DList<'a>
 
-    val singleton<'a> : 'a -> DList<'a>
+    val singleton : 'a -> DList<'a>
 
-    val fromSeq<'a> : seq<'a> -> DList<'a>
+    val fromSeq : seq<'a> -> DList<'a>
 
-    val toArray<'a> : DList<'a> -> 'a[]
+    val toArray : DList<'a> -> 'a[]
 
-    val toList<'a> : DList<'a> -> 'a list
+    val toList : DList<'a> -> 'a list
 
-    val toSeq<'a> : DList<'a> -> seq<'a>
+    val toSeq : DList<'a> -> seq<'a>
 
-    val foldr<'a, 'b> : ('a -> 'b -> 'b) -> 'b -> DList<'a> -> 'b
+    val foldr : ('a -> 'b -> 'b) -> 'b -> DList<'a> -> 'b
 
-    val cons<'a> : 'a -> DList<'a> -> DList<'a>
+    val cons : 'a -> DList<'a> -> DList<'a>
 
-    val snoc<'a> : DList<'a> -> 'a -> DList<'a>
+    val snoc : DList<'a> -> 'a -> DList<'a>
 
-    val map<'a, 'b> : ('a -> 'b) -> DList<'a> -> DList<'b>
+    val map : ('a -> 'b) -> DList<'a> -> DList<'b>
 
     val append : DList<'a> -> DList<'a> -> DList<'a>
+
+    val length : DList<'a> -> int
