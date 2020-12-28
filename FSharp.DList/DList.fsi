@@ -33,3 +33,5 @@ module DList =
     val append : DList<'a> -> DList<'a> -> DList<'a>
 
     val length : DList<'a> -> int
+
+    val isEmpty : DList<'a> -> bool

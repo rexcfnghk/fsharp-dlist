@@ -130,3 +130,22 @@ let ``Length returns expected number of elements in DList`` () =
 
         DList.length (DList.fromSeq seq) =! Seq.length seq
     }
+
+[<Fact>]
+let ``IsEmpty returns true when DList is empty`` () =
+    let sut = DList.empty
+
+    DList.isEmpty sut =! true
+
+[<Fact>]
+let ``IsEmpty returns false when DList has at least one element`` () =
+        Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! sut =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.isEmpty sut =! false
+    }
