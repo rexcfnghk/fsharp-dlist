@@ -27,11 +27,10 @@ jobs:
       uses: b3b00/coverlet-action@master
       with:
         testProject: 'FSharp.DList.Tests/FSharp.DList.Tests.fsproj'
-        output: 'lcov.info'
+        output: './coverage/lcov.info'
         outputFormat: 'lcov'
         excludes: '[program]*'
     - name: Coveralls      
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{secrets.GITHUB_TOKEN }} 
-        path-to-lcov: ${{steps.Coverlet.outputs.coverageFile}} 
