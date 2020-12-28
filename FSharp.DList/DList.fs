@@ -14,7 +14,7 @@ type DList<'a> =
     static member ToSeq xs = DList.UnDList<'a> xs Seq.empty
 
     override this.ToString () =
-        sprintf "%A" <| DList.ToSeq this
+        sprintf $"%A{DList.ToSeq this}"
 
     override this.Equals other =
         match other with

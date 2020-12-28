@@ -156,9 +156,7 @@ let ``Iter calls f expected number of times`` () =
     Property.check <| property {
         let intGen = Gen.int (Range.constant 10 100)
         let mutable i = 0
-        let incr _ =
-            i <- i + 1
-            ()
+        let incr _ = i <- i + 1
 
         let! sut =
             intGen
@@ -219,4 +217,16 @@ let ``CompareTo returns smaller than 0 when left DList has less elements than ri
             |> Gen.map DList.singleton
 
         compare DList.empty sut <! 0
+    }
+
+[<Fact>]
+let ``ToString returns expected representation`` () =
+    Property.check <| property {
+        let! seq =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+
+        let sut = DList.fromSeq seq
+
+        sprintf $"%A{sut}" =! sprintf $"%A{DList.toSeq sut}"
     }
