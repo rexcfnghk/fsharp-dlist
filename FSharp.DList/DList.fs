@@ -95,6 +95,6 @@ module DList =
 
     let iter f x = (Seq.iter f << toSeq) x
 
-    let length (x: DList<'a>) = (Seq.length << toSeq) x
+    let length xs = (Seq.length << toSeq) xs
 
     let isEmpty x = (Seq.isEmpty << toSeq) x
