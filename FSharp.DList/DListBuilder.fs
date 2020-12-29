@@ -11,6 +11,8 @@ type DListBuilder () =
 
     member _.For (xs, f) = Seq.foldBack (DList.append << f) xs DList.empty
 
+    member _.Zero () = DList.empty
+
 [<AutoOpen>]
 module Builder =
     let dList = DListBuilder ()

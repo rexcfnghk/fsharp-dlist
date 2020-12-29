@@ -256,7 +256,5 @@ let ``DList builder for returns equivalent DList using fromSeq`` () =
             intGen
             |> Gen.seq (Range.constant 1 100)
 
-        let sut = dList { yield x; for i in xs do yield i }
-
-        DList.fromSeq (Seq.cons x xs) =! sut
+        DList.fromSeq (Seq.cons x xs) =! dList { yield x; for i in xs -> i }
     }
