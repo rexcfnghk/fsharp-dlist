@@ -230,3 +230,33 @@ let ``ToString returns expected representation`` () =
 
         sprintf $"%A{sut}" =! sprintf $"%A{DList.toSeq sut}"
     }
+
+[<Fact>]
+let ``DList builder returns equivalent DList using fromSeq`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! x = intGen
+        let! xs =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+
+        let sut = dList { yield x; yield! xs }
+
+        DList.fromSeq (Seq.cons x xs) =! sut
+    }
+
+[<Fact>]
+let ``DList builder for returns equivalent DList using fromSeq`` () =
+    Property.check <| property {
+        let intGen = Gen.int (Range.constant 10 100)
+
+        let! x = intGen
+        let! xs =
+            intGen
+            |> Gen.seq (Range.constant 1 100)
+
+        let sut = dList { yield x; for i in xs do yield i }
+
+        DList.fromSeq (Seq.cons x xs) =! sut
+    }

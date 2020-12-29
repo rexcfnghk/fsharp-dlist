@@ -6,12 +6,15 @@ open System.Collections.Generic
 open FSharp.DList
 
 [<CustomEquality; CustomComparison>]
+[<StructuredFormatDisplay("{AsString}")>]
 type DList<'a> =
     | DList of (seq<'a> -> seq<'a>)
 
     static member UnDList (DList xs) = xs
 
     static member ToSeq xs = DList.UnDList<'a> xs Seq.empty
+
+    member this.AsString = this.ToString ()
 
     override this.ToString () =
         sprintf $"%A{DList.ToSeq this}"
@@ -58,7 +61,8 @@ type DList<'a> =
             match other with
             | :? DList<'a> as y ->
                 (this :> IComparable<DList<'a>>).CompareTo y
-            | _ -> invalidArg (nameof other) <| sprintf $"Object must be of type %s{nameof DList}"
+            | _ ->
+                invalidArg (nameof other) <| sprintf $"Object must be of type %s{nameof DList}"
 
     interface IEnumerable<'a> with
         member this.GetEnumerator () = (DList.ToSeq this).GetEnumerator ()
