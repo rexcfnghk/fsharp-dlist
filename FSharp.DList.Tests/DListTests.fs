@@ -258,3 +258,9 @@ let ``DList builder for returns equivalent DList using fromSeq`` () =
 
         DList.fromSeq (Seq.cons x xs) =! dList { yield x; for i in xs -> i }
     }
+
+[<Fact>]
+let ``DList builder zero returns empty DList`` () =
+    let sut = dList {()}
+
+    sut =! DList.empty

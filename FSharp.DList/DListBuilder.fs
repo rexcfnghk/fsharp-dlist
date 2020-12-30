@@ -1,5 +1,6 @@
 namespace FSharp.DList
 
+[<Sealed>]
 type DListBuilder () =
     member _.Yield x = DList.singleton x
 
