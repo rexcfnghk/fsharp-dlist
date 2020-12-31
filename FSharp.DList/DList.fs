@@ -85,6 +85,8 @@ module DList =
 
     let foldr f z xs = Seq.foldBack f (toSeq xs) z
 
+    let foldl f z xs = Seq.fold f z (toSeq xs)
+
     let fromSeq xs = (DList << Seq.append) xs
 
     let cons x xs = fromSeq <| Seq.cons x (toSeq xs)

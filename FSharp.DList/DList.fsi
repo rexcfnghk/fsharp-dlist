@@ -24,6 +24,8 @@ module DList =
 
     val foldr : ('a -> 'b -> 'b) -> 'b -> DList<'a> -> 'b
 
+    val foldl : ('b -> 'a -> 'b) -> 'b -> DList<'a> -> 'b
+
     val cons : 'a -> DList<'a> -> DList<'a>
 
     val snoc : DList<'a> -> 'a -> DList<'a>

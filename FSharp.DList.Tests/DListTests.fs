@@ -260,7 +260,41 @@ let ``DList builder for returns equivalent DList using fromSeq`` () =
     }
 
 [<Fact>]
+let ``Combine obeys monoid laws`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.append DList.empty sut =! DList.append sut DList.empty
+        dList { (); yield! sut } =! dList { yield! sut; () }
+    }
+
+[<Fact>]
 let ``DList builder zero returns empty DList`` () =
     let sut = dList {()}
 
     sut =! DList.empty
+
+[<Fact>]
+let ``Foldl returns same result as foldr when operator is commutative`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.foldr (+) 0 sut =! DList.foldl (+) 0 sut
+    }
+
+[<Fact>]
+let ``ToArray returns same sequence as toList`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        DList.toList sut =! List.ofArray (DList.toArray sut)
+    }
