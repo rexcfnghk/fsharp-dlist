@@ -134,9 +134,7 @@ let ``Length returns expected number of elements in DList`` () =
 
 [<Fact>]
 let ``IsEmpty returns true when DList is empty`` () =
-    let sut = DList.empty
-
-    DList.isEmpty sut =! true
+    test <@ DList.isEmpty DList.empty @>
 
 [<Fact>]
 let ``IsEmpty returns false when DList has at least one element`` () =
@@ -148,7 +146,7 @@ let ``IsEmpty returns false when DList has at least one element`` () =
             |> Gen.seq (Range.constant 1 100)
             |> Gen.map DList.fromSeq
 
-        DList.isEmpty sut =! false
+        test <@ not (DList.isEmpty sut) @>
     }
 
 [<Fact>]
@@ -187,7 +185,7 @@ let ``GetHashCode returns equal values when instances are equal`` () =
 
         let other = sut
 
-        sut.GetHashCode () =! other.GetHashCode ()
+        hash sut =! hash other
     }
 
 [<Fact>]
