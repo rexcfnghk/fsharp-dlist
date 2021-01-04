@@ -104,3 +104,5 @@ module DList =
     let length xs = (Seq.length << toSeq) xs
 
     let isEmpty x = (Seq.isEmpty << toSeq) x
+
+    let collect f xs = foldr (append << f) empty xs

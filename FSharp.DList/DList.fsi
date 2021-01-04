@@ -32,6 +32,8 @@ module DList =
 
     val map : ('a -> 'b) -> DList<'a> -> DList<'b>
 
+    val collect : ('a -> DList<'b>) -> DList<'a> -> DList<'b>
+
     val iter : ('a -> unit) -> DList<'a> -> unit
 
     val append : DList<'a> -> DList<'a> -> DList<'a>

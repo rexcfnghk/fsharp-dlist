@@ -296,3 +296,14 @@ let ``ToArray returns same sequence as toList`` () =
 
         DList.toList sut =! List.ofArray (DList.toArray sut)
     }
+
+[<Fact>]
+let ``Collect returns original DList when f returns singleton`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        sut =! DList.collect DList.singleton sut
+    }
