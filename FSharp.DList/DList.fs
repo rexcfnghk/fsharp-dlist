@@ -97,12 +97,12 @@ module DList =
 
     let snoc xs x = append xs (singleton x)
 
-    let map f x = (foldr (cons << f) empty) x
+    let map f xs = (foldr (cons << f) empty) xs
 
-    let iter f x = (Seq.iter f << toSeq) x
+    let iter f xs = (Seq.iter f << toSeq) xs
 
     let length xs = (Seq.length << toSeq) xs
 
-    let isEmpty x = (Seq.isEmpty << toSeq) x
+    let isEmpty xs = (Seq.isEmpty << toSeq) xs
 
     let collect f xs = foldr (append << f) empty xs
