@@ -91,13 +91,13 @@ module DList =
 
     let cons x xs = fromSeq <| Seq.cons x (toSeq xs)
 
-    let singleton x = (flip cons empty) x
+    let singleton x = flip cons empty x
 
     let append (DList xs) (DList ys) = DList (xs << ys)
 
     let snoc xs x = append xs (singleton x)
 
-    let map f xs = (foldr (cons << f) empty) xs
+    let map f xs = foldr (cons << f) empty xs
 
     let iter f xs = (Seq.iter f << toSeq) xs
 
