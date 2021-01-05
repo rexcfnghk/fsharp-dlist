@@ -307,3 +307,17 @@ let ``Collect returns original DList when f returns singleton`` () =
 
         sut =! DList.collect DList.singleton sut
     }
+
+[<Fact>]
+let ``Concat returns same result as append given two DLists`` () =
+    Property.check <| property {
+        let dListGen =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+
+        let! xs = dListGen
+        let! ys = dListGen
+
+       DList.concat [xs; ys] =! DList.append xs ys
+    }

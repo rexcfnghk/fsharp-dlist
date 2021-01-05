@@ -106,3 +106,5 @@ module DList =
     let isEmpty xs = (Seq.isEmpty << toSeq) xs
 
     let collect f xs = foldr (append << f) empty xs
+
+    let concat xs = Seq.fold append empty xs
