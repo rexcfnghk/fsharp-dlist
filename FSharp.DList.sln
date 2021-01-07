@@ -4,6 +4,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.DList", "FSharp.DLis
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.DList.Tests", "FSharp.DList.Tests\FSharp.DList.Tests.fsproj", "{45425D6D-531C-4BE8-A230-DAAAA2EC1B47}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.DList.Benchmarks", "FSharp.DList.Benchmarks\FSharp.DList.Benchmarks.fsproj", "{C4EFB420-07AD-4E71-862C-2CE98412CA38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{45425D6D-531C-4BE8-A230-DAAAA2EC1B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45425D6D-531C-4BE8-A230-DAAAA2EC1B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45425D6D-531C-4BE8-A230-DAAAA2EC1B47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4EFB420-07AD-4E71-862C-2CE98412CA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EFB420-07AD-4E71-862C-2CE98412CA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4EFB420-07AD-4E71-862C-2CE98412CA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EFB420-07AD-4E71-862C-2CE98412CA38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

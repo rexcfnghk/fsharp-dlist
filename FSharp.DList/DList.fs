@@ -99,6 +99,9 @@ module DList =
 
     let map f xs = foldr (cons << f) empty xs
 
+    let filter predicate xs =
+        foldr (fun x xs -> if predicate x then cons x xs else xs) empty xs
+
     let iter f xs = (Seq.iter f << toSeq) xs
 
     let length xs = (Seq.length << toSeq) xs

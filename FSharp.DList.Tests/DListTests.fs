@@ -321,3 +321,31 @@ let ``Concat returns same result as append given two DLists`` () =
 
        DList.concat [xs; ys] =! DList.append xs ys
     }
+
+[<Fact>]
+let ``Concat empty sequence returns empty DList`` () =
+    DList.concat Seq.empty =! DList.empty
+
+[<Fact>]
+let ``Filter returns original DList when predicate always returns true`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+        let predicate _ = true
+
+       DList.filter predicate sut =! sut
+    }
+
+[<Fact>]
+let ``Filter returns empty DList when predicate always returns false`` () =
+    Property.check <| property {
+        let! sut =
+            Gen.int (Range.constant 10 100)
+            |> Gen.seq (Range.constant 1 100)
+            |> Gen.map DList.fromSeq
+        let predicate _ = false
+
+       DList.filter predicate sut =! DList.empty
+    }
