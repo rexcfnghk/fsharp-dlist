@@ -3,5 +3,9 @@ open BenchmarkDotNet.Running
 
 [<EntryPoint>]
 let main argv =
-    ignore <| BenchmarkSwitcher.FromAssembly(Assembly.GetExecutingAssembly ()).Run argv
+    Assembly.GetExecutingAssembly ()
+    |> BenchmarkSwitcher.FromAssembly
+    |> fun s -> s.Run argv
+    |> ignore
+
     0
