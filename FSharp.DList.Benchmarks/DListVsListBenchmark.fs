@@ -5,6 +5,8 @@ open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Jobs
 open FSharp.DList
 
+[<SimpleJob(RuntimeMoniker.Net48, baseline = true)>]
+[<SimpleJob(RuntimeMoniker.NetCoreApp31)>]
 [<SimpleJob(RuntimeMoniker.NetCoreApp50)>]
 type DListVsList () =
     let mutable dList = DList.empty
