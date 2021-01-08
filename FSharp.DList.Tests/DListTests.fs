@@ -319,7 +319,7 @@ let ``Concat returns same result as append given two DLists`` () =
         let! xs = dListGen
         let! ys = dListGen
 
-       DList.concat [xs; ys] =! DList.append xs ys
+        DList.concat [xs; ys] =! DList.append xs ys
     }
 
 [<Fact>]
@@ -335,7 +335,7 @@ let ``Filter returns original DList when predicate always returns true`` () =
             |> Gen.map DList.fromSeq
         let predicate _ = true
 
-       DList.filter predicate sut =! sut
+        DList.filter predicate sut =! sut
     }
 
 [<Fact>]
@@ -347,5 +347,5 @@ let ``Filter returns empty DList when predicate always returns false`` () =
             |> Gen.map DList.fromSeq
         let predicate _ = false
 
-       DList.filter predicate sut =! DList.empty
+        DList.filter predicate sut =! DList.empty
     }

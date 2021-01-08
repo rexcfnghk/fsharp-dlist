@@ -26,23 +26,18 @@ type DList<'a> =
         | _ -> false
 
     override this.GetHashCode () =
-        let seq = DList.ToSeq this
-        Seq.fold (fun acc x -> acc * 7 + Unchecked.hash x) 13 seq
+        Seq.fold (fun acc x -> acc * 7 + Unchecked.hash x) 13 this
 
     interface IEquatable<DList<'a>> with
         member this.Equals other =
-            let (left, right) =
-                (Seq.toArray <| DList.ToSeq this,
-                 Seq.toArray <| DList.ToSeq other)
+            let left, right = Seq.toArray this, Seq.toArray other
             if Array.length left <> Array.length right
             then false
-            else Array.forall2 (Unchecked.equals) left right
+            else Array.forall2 Unchecked.equals left right
 
     interface IComparable<DList<'a>> with
         member this.CompareTo other =
-            let left, right =
-                (Seq.toArray <| DList.ToSeq this,
-                 Seq.toArray <| DList.ToSeq other)
+            let left, right = Seq.toArray this, Seq.toArray other
 
             let leftLength, rightLength =
                 Array.length left, Array.length right
