@@ -357,7 +357,7 @@ let ``Non-generic GetEnumerator returns expected seq`` () =
             Gen.int (Range.constant 10 100)
             |> Gen.seq (Range.constant 1 100)
             
-        let sut = DList.fromSeq seq
+        let sut = DList.fromSeq seq :> Collections.IEnumerable
 
-        (sut :> Collections.IEnumerable) =! (seq :> Collections.IEnumerable)
+        Seq.toList (Seq.cast<int> sut) =! Seq.toList seq
     }    
