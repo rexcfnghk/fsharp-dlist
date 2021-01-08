@@ -79,17 +79,17 @@ module DList =
 
     let toSeq (DList xs) = xs Seq.empty
 
-    let toArray xs = (Seq.toArray << toSeq) xs
+    let toArray (xs: DList<_>) = Seq.toArray xs
 
-    let toList xs = (Seq.toList << toSeq) xs
+    let toList (xs: DList<_>) = Seq.toList xs
 
-    let foldr f z xs = Seq.foldBack f (toSeq xs) z
+    let foldr f z (xs: DList<_>) = Seq.foldBack f xs z
 
-    let foldl f z xs = Seq.fold f z (toSeq xs)
+    let foldl f z (xs: DList<_>) = Seq.fold f z xs
 
-    let fromSeq xs = (DList << Seq.append) xs
+    let fromSeq xs = DList (Seq.append xs)
 
-    let cons x xs = fromSeq <| Seq.cons x (toSeq xs)
+    let cons x (xs: DList<_>) = fromSeq <| Seq.cons x xs
 
     let singleton x = flip cons empty x
 
@@ -102,11 +102,11 @@ module DList =
     let filter predicate xs =
         foldr (fun x xs -> if predicate x then cons x xs else xs) empty xs
 
-    let iter f xs = (Seq.iter f << toSeq) xs
+    let iter f (xs: DList<_>) = Seq.iter f xs
 
-    let length xs = (Seq.length << toSeq) xs
+    let length (xs: DList<_>) = Seq.length xs
 
-    let isEmpty xs = (Seq.isEmpty << toSeq) xs
+    let isEmpty (xs: DList<_>) = Seq.isEmpty xs
 
     let collect f xs = foldr (append << f) empty xs
 
