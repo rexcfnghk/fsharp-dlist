@@ -3,8 +3,10 @@
 open System
 open System.Collections
 open System.Collections.Generic
+open System.Runtime.CompilerServices
 open FSharp.DList
 
+[<Struct; IsReadOnly>]
 [<CustomEquality; CustomComparison>]
 [<StructuredFormatDisplay("{AsString}")>]
 type DList<'a> =

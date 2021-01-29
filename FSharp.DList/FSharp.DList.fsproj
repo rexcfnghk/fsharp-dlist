@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="Utilities.fs" />
         <Compile Include="Seq.fs" />
-        <Compile Include="DList.fsi" />
         <Compile Include="DList.fs" />
         <Compile Include="DListBuilder.fs" />
     </ItemGroup>
