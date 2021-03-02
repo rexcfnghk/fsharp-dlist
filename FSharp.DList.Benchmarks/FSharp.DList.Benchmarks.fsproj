@@ -19,4 +19,8 @@
       <ProjectReference Include="..\FSharp.DList\FSharp.DList.fsproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="5.0.1" />
+    </ItemGroup>
+
 </Project>
