@@ -25,7 +25,7 @@ let ``Dlists are not equal when lengths are not equal`` (leftChars: seq<char>) (
 
     left <>! right
 
-[<Property>]
+[<Property(typeof<DListGenConfigContainer<char>>)>]
 let ``DLists can roundtrip`` (sut: DList<char>) =
     DList.fromSeq (DList.toSeq sut) =! sut
 
