@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="DListGenConfigContainer.fs" />
         <Compile Include="SeqTests.fs" />
         <Compile Include="DListTests.fs" />
         <Compile Include="Program.fs" />
@@ -19,6 +20,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Hedgehog" Version="0.10.0" />
+        <PackageReference Include="Hedgehog.Xunit" Version="0.2.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
         <PackageReference Include="Unquote" Version="6.0.0" />
         <PackageReference Include="xunit" Version="2.4.1" />

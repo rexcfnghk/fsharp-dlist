@@ -2,9 +2,9 @@ module FSharp.DList.Tests.DListTests
 
 open System
 open FSharp.DList
-open Hedgehog
-open Swensen.Unquote
 open Xunit
+open Hedgehog.Xunit
+open Swensen.Unquote
 
 [<Fact>]
 let ``Empty Dlists are considered equal`` () =
@@ -13,158 +13,66 @@ let ``Empty Dlists are considered equal`` () =
 
     x =! y
 
-[<Fact>]
-let ``Dlists with same content are considered equal`` () =
-    Property.check <| property {
-        let! chars =
-            Gen.alphaNum
-            |> Gen.seq (Range.constant 10 100)
+[<Property>]
+let ``Dlists with same content are considered equal`` (chars: seq<char>) =
+    let (left, right) = (DList.fromSeq chars, DList.fromSeq chars)
 
-        let (left, right) = (DList.fromSeq chars, DList.fromSeq chars)
+    left =! right
 
-        left =! right
-    }
+[<Property>]
+let ``Dlists are not equal when lengths are not equal`` (leftChars: seq<char>) (rightChars: seq<char>) =
+    let (left, right) = (DList.fromSeq leftChars, DList.fromSeq rightChars)
 
-[<Fact>]
-let ``Dlists are not equal when lengths are not equal`` () =
-    Property.check <| property {
-        let! leftChars =
-            Gen.alphaNum
-            |> Gen.seq (Range.constant 1 10)
+    left <>! right
 
-        let! rightChars =
-            Gen.alphaNum
-            |> Gen.seq (Range.constant 11 100)
+[<Property(typeof<DListGenConfigContainer<char>>)>]
+let ``DLists can roundtrip`` (sut: DList<char>) =
+    DList.fromSeq (DList.toSeq sut) =! sut
 
-        let (left, right) = (DList.fromSeq leftChars, DList.fromSeq rightChars)
+[<Property>]
+let ``DLists are comparable`` (left: DList<int>) =
+    let right = DList.map ((+) 1) left
 
-        left <>! right
-    }
+    right >! left
 
-[<Fact>]
-let ``DLists can roundtrip`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.alphaNum
-            |> Gen.seq (Range.constant 10 100)
-            |> Gen.map DList.fromSeq
+[<Property>]
+let ``Snoc returns expected list with new element concatenated at the end`` (dlist: DList<int>) x =
+    DList.toList dlist @ [x] =! DList.toList (DList.snoc dlist x)
 
-        DList.fromSeq (DList.toSeq sut) =! sut
-    }
+[<Property>]
+let ``Cons returns expected list with new element concatenated at the start`` (dlist: DList<int>) x =
+    x :: DList.toList dlist =! DList.toList (DList.cons x dlist)
 
-[<Fact>]
-let ``DLists are comparable`` () =
-    Property.check <| property {
-        let! left =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
+[<Property>]
+let ``Singleton returns expected DList with expected single element`` (char: char) =
+    let sut = DList.singleton char
 
-        let right = DList.map ((+) 1) left
+    sut =! DList.fromSeq [char]
 
-        right >! left
-    }
+[<Property>]
+let ``Map id returns original DList`` (dlist: DList<int>) =
+    DList.map id dlist =! dlist
 
-[<Fact>]
-let ``Snoc returns expected list with new element concatenated at the end`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let! dlist =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        let! x = intGen
-
-        DList.toList dlist @ [x] =! DList.toList (DList.snoc dlist x)
-    }
-
-[<Fact>]
-let ``Cons returns expected list with new element concatenated at the start`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let! dlist =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        let! x = intGen
-
-        x :: DList.toList dlist =! DList.toList (DList.cons x dlist)
-    }
-
-[<Fact>]
-let ``Singleton returns expected DList with expected single element`` () =
-    Property.check <| property {
-        let! char = Gen.alphaNum
-
-        let sut = DList.singleton char
-
-        sut =! DList.fromSeq [char]
-    }
-
-[<Fact>]
-let ``Map id returns original DList`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let! dlist =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        DList.map id dlist =! dlist
-    }
-
-[<Fact>]
-let ``Length returns expected number of elements in DList`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let seqGen =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-
-        let! seq = seqGen
-
-        DList.length (DList.fromSeq seq) =! Seq.length seq
-    }
+[<Property>]
+let ``Length returns expected number of elements in DList`` (seq: seq<int>) =
+    DList.length (DList.fromSeq seq) =! Seq.length seq
 
 [<Fact>]
 let ``IsEmpty returns true when DList is empty`` () =
     test <@ DList.isEmpty DList.empty @>
 
-[<Fact>]
-let ``IsEmpty returns false when DList has at least one element`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
+[<Property>]
+let ``IsEmpty returns false when DList has at least one element`` (sut: DList<int>) =
+    test <@ not (DList.isEmpty sut) @>
 
-        let! sut =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
+[<Property>]
+let ``Iter calls f expected number of times`` (sut: DList<int>) =
+    let mutable i = 0
+    let incr _ = i <- i + 1
 
-        test <@ not (DList.isEmpty sut) @>
-    }
+    DList.iter incr sut
 
-[<Fact>]
-let ``Iter calls f expected number of times`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-        let mutable i = 0
-        let incr _ = i <- i + 1
-
-        let! sut =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        DList.iter incr sut
-
-        i =! DList.length sut
-    }
+    i =! DList.length sut
 
 [<Fact>]
 let ``Equals returns false when other is not DList`` () =
@@ -173,101 +81,44 @@ let ``Equals returns false when other is not DList`` () =
 
     sut.Equals other =! false
 
-[<Fact>]
-let ``GetHashCode returns equal values when instances are equal`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
+[<Property>]
+let ``GetHashCode returns equal values when instances are equal`` (sut: DList<int>) =
+    let other = sut
 
-        let! sut =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
+    hash sut =! hash other
 
-        let other = sut
-
-        hash sut =! hash other
-    }
-
-[<Fact>]
-let ``Non-generic CompareTo throws when other is not DList`` () =
-    let sut : DList<obj> = DList.empty
+[<Property>]
+let ``Non-generic CompareTo throws when other is not DList`` (sut: DList<int>) =
     let other = obj ()
 
     raises<ArgumentException> <@ (sut :> IComparable).CompareTo other @>
 
-[<Fact>]
-let ``CompareTo returns larger than 0 when left DList has more elements than right`` () =
-    Property.check <| property {
-        let! sut =
-            Range.constant 10 100
-            |> Gen.int
-            |> Gen.map DList.singleton
+[<Property>]
+let ``CompareTo returns larger than 0 when left DList has more elements than right`` (sut: DList<int>) =
+    compare sut DList.empty >! 0
 
-        compare sut DList.empty >! 0
-    }
+[<Property>]
+let ``CompareTo returns smaller than 0 when left DList has less elements than right`` (sut: DList<int>) =
+    compare DList.empty sut <! 0
 
-[<Fact>]
-let ``CompareTo returns smaller than 0 when left DList has less elements than right`` () =
-    Property.check <| property {
-        let! sut =
-            Range.constant 10 100
-            |> Gen.int
-            |> Gen.map DList.singleton
+[<Property>]
+let ``ToString returns expected representation`` (sut: DList<int>) =
+    sprintf $"%A{sut}" =! sprintf $"%A{DList.toSeq sut}"
 
-        compare DList.empty sut <! 0
-    }
+[<Property>]
+let ``DList builder returns equivalent DList using fromSeq`` (x: int) xs =
+    let sut = dList { yield x; yield! xs }
 
-[<Fact>]
-let ``ToString returns expected representation`` () =
-    Property.check <| property {
-        let! seq =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
+    DList.fromSeq (Seq.cons x xs) =! sut
 
-        let sut = DList.fromSeq seq
+[<Property>]
+let ``DList builder for returns equivalent DList using fromSeq`` (x: int) xs =
+    DList.fromSeq (Seq.cons x xs) =! dList { yield x; for i in xs -> i }
 
-        sprintf $"%A{sut}" =! sprintf $"%A{DList.toSeq sut}"
-    }
-
-[<Fact>]
-let ``DList builder returns equivalent DList using fromSeq`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let! x = intGen
-        let! xs =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-
-        let sut = dList { yield x; yield! xs }
-
-        DList.fromSeq (Seq.cons x xs) =! sut
-    }
-
-[<Fact>]
-let ``DList builder for returns equivalent DList using fromSeq`` () =
-    Property.check <| property {
-        let intGen = Gen.int (Range.constant 10 100)
-
-        let! x = intGen
-        let! xs =
-            intGen
-            |> Gen.seq (Range.constant 1 100)
-
-        DList.fromSeq (Seq.cons x xs) =! dList { yield x; for i in xs -> i }
-    }
-
-[<Fact>]
-let ``Combine obeys monoid laws`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        DList.append DList.empty sut =! DList.append sut DList.empty
-        dList { (); yield! sut } =! dList { yield! sut; () }
-    }
+[<Property>]
+let ``Combine obeys monoid laws`` (sut: DList<int>) =
+    DList.append DList.empty sut =! DList.append sut DList.empty
+    dList { (); yield! sut } =! dList { yield! sut; () }
 
 [<Fact>]
 let ``DList builder zero returns empty DList`` () =
@@ -275,89 +126,40 @@ let ``DList builder zero returns empty DList`` () =
 
     sut =! DList.empty
 
-[<Fact>]
-let ``Foldl returns same result as foldr when operator is commutative`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
+[<Property>]
+let ``Foldl returns same result as foldr when operator is commutative`` (sut: DList<int>) =
+    DList.foldr (+) 0 sut =! DList.foldl (+) 0 sut
 
-        DList.foldr (+) 0 sut =! DList.foldl (+) 0 sut
-    }
+[<Property>]
+let ``ToArray returns same sequence as toList`` (sut: DList<int>) =
+    DList.toList sut =! List.ofArray (DList.toArray sut)
 
-[<Fact>]
-let ``ToArray returns same sequence as toList`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
+[<Property>]
+let ``Collect returns original DList when f returns singleton`` (sut: DList<int>) =
+    sut =! DList.collect DList.singleton sut
 
-        DList.toList sut =! List.ofArray (DList.toArray sut)
-    }
-
-[<Fact>]
-let ``Collect returns original DList when f returns singleton`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        sut =! DList.collect DList.singleton sut
-    }
-
-[<Fact>]
-let ``Concat returns same result as append given two DLists`` () =
-    Property.check <| property {
-        let dListGen =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-
-        let! xs = dListGen
-        let! ys = dListGen
-
-        DList.concat [xs; ys] =! DList.append xs ys
-    }
+[<Property>]
+let ``Concat returns same result as append given two DLists`` (xs: DList<int>) ys =
+    DList.concat [xs; ys] =! DList.append xs ys
 
 [<Fact>]
 let ``Concat empty sequence returns empty DList`` () =
     DList.concat Seq.empty =! DList.empty
 
-[<Fact>]
-let ``Filter returns original DList when predicate always returns true`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-        let predicate _ = true
+[<Property>]
+let ``Filter returns original DList when predicate always returns true`` (sut: DList<int>) =
+    let predicate _ = true
 
-        DList.filter predicate sut =! sut
-    }
+    DList.filter predicate sut =! sut
 
-[<Fact>]
-let ``Filter returns empty DList when predicate always returns false`` () =
-    Property.check <| property {
-        let! sut =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            |> Gen.map DList.fromSeq
-        let predicate _ = false
+[<Property>]
+let ``Filter returns empty DList when predicate always returns false`` (sut: DList<int>) =
+    let predicate _ = false
 
-        DList.filter predicate sut =! DList.empty
-    }
+    DList.filter predicate sut =! DList.empty
 
-[<Fact>]
-let ``Non-generic GetEnumerator returns expected seq`` () =
-    Property.check <| property {
-        let! seq =
-            Gen.int (Range.constant 10 100)
-            |> Gen.seq (Range.constant 1 100)
-            
-        let sut = DList.fromSeq seq :> Collections.IEnumerable
+[<Property>]
+let ``Non-generic GetEnumerator returns expected seq`` (seq: seq<int>) =
+    let sut = DList.fromSeq seq :> Collections.IEnumerable
 
-        Seq.toList (Seq.cast<int> sut) =! Seq.toList seq
-    }    
+    Seq.toList (Seq.cast<int> sut) =! Seq.toList seq
