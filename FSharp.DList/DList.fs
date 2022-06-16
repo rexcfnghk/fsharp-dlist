@@ -97,7 +97,7 @@ module DList =
     let map f xs = foldr (cons << f) empty xs
 
     let filter predicate xs =
-        foldr (fun x xs -> if predicate x then cons x xs else xs) empty xs
+        foldr (fun x -> if predicate x then cons x else id) empty xs
 
     let iter f (xs: DList<_>) = Seq.iter f xs
 
